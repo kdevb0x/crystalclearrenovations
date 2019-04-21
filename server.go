@@ -6,6 +6,9 @@ package main
 
 import (
 	"net/http"
+	"time"
+
+	"github.com/gorilla/mux"
 )
 
 type session struct {
@@ -14,10 +17,57 @@ type session struct {
 }
 
 type Server struct {
-	Addr         string
+	http.Server
 	ConnListener http.ResponseWriter
+	KillChan     chan struct{} // tells server to drop connections and shutdown
 }
 
 func InitServer(addr string) *Server {
-	l := NewConnListe
+	s := &Server{KillChan: make(chan struct{}, 1)}
+	r := buildRoutes()
+	s.Handler = r
+	s.Addr = addr
+	s.WriteTimeout = 15 * time.Second
+	s.ReadTimeout = 15 * time.Second
+	return s
+}
+
+func buildRoutes() *mux.Router {
+	r := mux.NewRouter()
+	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("assets"))))
+	return r
+
+}
+
+func (s *Server) Start(rwTimeouts ...time.Duration) error {
+	var errChan = make(chan error, 1)
+
+	// haltfunc listens for the signal to shutdown server
+	haltfunc := func() {
+		for {
+			select {
+			case <-s.KillChan:
+				err := s.Shutdown(nil)
+				if err != nil {
+					errChan <- err
+				}
+			default:
+				continue
+			}
+		}
+	}
+
+	// serveFunc enters the mainloop
+	var serveFunc = func() {
+		errChan <- s.ListenAndServe()
+	}
+	if rwTimeouts != nil {
+		s.ReadTimeout = rwTimeouts[0]
+		s.WriteTimeout = rwTimeouts[1]
+	}
+
+	go haltfunc()
+	defer serveFunc()
+
+	return <-errChan
 }

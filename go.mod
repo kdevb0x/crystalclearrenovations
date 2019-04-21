@@ -14,7 +14,7 @@ require (
 	github.com/go-delve/delve v1.2.0 // indirect
 	github.com/golangci/golangci-lint v1.16.0 // indirect
 	github.com/google/shlex v0.0.0-20181106134648-c34317bd91bf // indirect
-	github.com/gorilla/mux v1.7.1 // indirect
+	github.com/gorilla/mux v1.7.1
 	github.com/josharian/impl v0.0.0-20180228163738-3d0f908298c4 // indirect
 	github.com/jstemmer/gotags v1.4.1 // indirect
 	github.com/juju/errors v0.0.0-20190207033735-e65537c515d7 // indirect
