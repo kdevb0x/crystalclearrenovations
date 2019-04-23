@@ -2,6 +2,8 @@
 // This software may be modified and distributed under the terms
 // of the MIT license.  See the LICENSE file for details.
 
+// +build GODEBUG=tls13=1
+
 package main
 
 import (
@@ -35,11 +37,12 @@ func InitServer(addr string) *Server {
 func buildRoutes() *mux.Router {
 	r := mux.NewRouter()
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("assets"))))
+	http.Handle("/", r)
 	return r
 
 }
 
-func (s *Server) Start(rwTimeouts ...time.Duration) error {
+func (s *Server) Start(rwTimeouts ...time.Duration) <-chan error {
 	var errChan = make(chan error, 1)
 
 	// haltfunc listens for the signal to shutdown server
@@ -67,7 +70,7 @@ func (s *Server) Start(rwTimeouts ...time.Duration) error {
 	}
 
 	go haltfunc()
-	defer serveFunc()
+	go serveFunc()
 
-	return <-errChan
+	return errChan
 }
