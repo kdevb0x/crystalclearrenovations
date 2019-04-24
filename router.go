@@ -10,6 +10,11 @@ import (
 	"github.com/gorilla/mux"
 )
 
+const (
+	_ error = iota
+	ErrMalformedOrNilRequest
+)
+
 type SessionServer struct {
 	HostAddr   string
 	Router     *mux.Router
@@ -27,5 +32,11 @@ func NewSessionServer(hostAddr string) *SessionServer {
 		Router:   mux.NewRouter(),
 		// ReqHandler and RespWriter are nil at this point as they
 		// change on per-connection basis (we have no connection yet).
+	}
+}
+
+func (s *SessionServer) HandleRequest(r *http.Request) error {
+	if r == nil {
+		return ErrMalformedOrNilRequest
 	}
 }
