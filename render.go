@@ -2,17 +2,18 @@
 // This software may be modified and distributed under the terms
 // of the MIT license.  See the LICENSE file for details.
 
-package templates
+package main
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"path/filepath"
-
-	"github.com/flosch/pongo2"
 )
+
+var ErrNotFound = errors.New("error: key not found")
 
 // Project represents model for completed projects in the database.
 type PastProjects struct {
@@ -21,20 +22,67 @@ type PastProjects struct {
 	Images   []string `db:"images"` // filenames of images
 }
 
-func LoadTemplateSet(filename string) *pongo2.TemplateSet {
-	var t = &TemplateLoader{Context: make(pongo2.Context)}
-	return pongo2.NewSet("index", t)
+func LoadTemplateSet(filename string) {
 }
 
-type TemplateLoader struct {
-	Context pongo2.Context
+type TemplateSet struct {
+	Loader TemplateLoader
 }
 
-func (l *templateLoader) Abs(base, name string) string {
+// Context is a map holding usable tagsets.
+type context map[string]interface{}
+
+type Value interface{}
+
+type TemplateLoader interface {
+	Abs(base, name string) string
+	Get(path string) (io.Reader, error)
+}
+
+type Context interface {
+	Value(key string) interface{}
+	Keys() []string
+	DumpAll() []struct {
+		key   string
+		value Value
+	}
+	AddTag(key string, value interface{})
+}
+
+func (c *context) Value(key string) Value {
+	if val, ok := *c[key]; ok {
+		return val
+	}
+	return ErrNotFound
+}
+
+func (c *context) Keys() []string {
+	var keys []string
+	for k, _ := range *c {
+		keys = append(keys, k)
+	}
+	return keys
+}
+
+func (c *context) DumpAll() []struct {
+	key   string
+	value Value
+} {
+	type tag struct {
+		key   string
+		value Value
+	}
+	var tags = make([]tag, len(*c))
+	for k, v := range *c {
+		tags = append(tags, tag{k, v})
+	}
+	return tags
+}
+func (l *TemplateSet) Abs(base, name string) string {
 	return filepath.Join(base, name)
 }
 
-func (l *templateLoader) Get(path string) (io.Reader, error) {
+func (l *TemplateSet) Get(path string) (io.Reader, error) {
 	return getTemplate(path)
 }
 
@@ -47,7 +95,7 @@ func getTemplate(filepath string) (io.Reader, error) {
 	return r, nil
 }
 
-func (l *templateLoader) AddTag(name string, action interface{}) error {
+func (l *TemplateSet) AddTag(name string, action interface{}) error {
 	if _, ok := l.context[name]; !ok {
 		l.context[name] = action
 		return nil
