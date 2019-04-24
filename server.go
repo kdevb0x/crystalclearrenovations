@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the MIT license.  See the LICENSE file for details.
 
-// +build GODEBUG=tls13=1
+// +build ignore
 
 package main
 

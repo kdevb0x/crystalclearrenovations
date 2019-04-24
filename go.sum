@@ -3,6 +3,8 @@ github.com/flosch/pongo2 v0.0.0-20181225140029-79872a7b2769/go.mod h1:tbAXHifHQW
 github.com/go-check/check v1.0.0-20180628173108-788fd7840127/go.mod h1:9ES+weclKsC9YodN5RgxqK/VD9HM9JsCSh7rNhMZE98=
 github.com/gorilla/http v0.0.0-20180526232503-732371cf4733 h1:XP4dudjlxzadyN7vy99RS0wKby/Kkcp4Ejnl7eE7HPY=
 github.com/gorilla/http v0.0.0-20180526232503-732371cf4733/go.mod h1:7SoxxYlLs8XfoT5AXYy1WWMqjg3iaA9gZblNHzXQDqo=
+github.com/gorilla/mux v1.7.1 h1:Dw4jY2nghMMRsh1ol8dv1axHkDwMQK2DHerMNJsIpJU=
+github.com/gorilla/mux v1.7.1/go.mod h1:1lud6UwP+6orDFRuTfBEV8e9/aOM/c4fVVCaMa2zaAs=
 github.com/juju/errors v0.0.0-20181118221551-089d3ea4e4d5 h1:rhqTjzJlm7EbkELJDKMTU7udov+Se0xZkWmugr6zGok=
 github.com/juju/errors v0.0.0-20181118221551-089d3ea4e4d5/go.mod h1:W54LbzXuIE0boCoNJfwqpmkKJ1O4TCTZMetAt6jGk7Q=
 github.com/juju/loggo v0.0.0-20180524022052-584905176618/go.mod h1:vgyd7OREkbtVEN/8IXZe5Ooef3LQePvuBm9UWj6ZL8U=
