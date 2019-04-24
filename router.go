@@ -39,4 +39,5 @@ func (s *SessionServer) HandleRequest(r *http.Request) error {
 	if r == nil {
 		return ErrMalformedOrNilRequest
 	}
+	return nil
 }
