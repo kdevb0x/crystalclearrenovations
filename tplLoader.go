@@ -5,6 +5,7 @@
 package main
 
 import (
+	"bytes"
 	"io"
 	"io/ioutil"
 	"path/filepath"
@@ -24,7 +25,12 @@ func (t *TemplateHandler) Abs(base, name string) string {
 }
 
 func (t *TemplateHandler) Get(path string) (io.Reader, error) {
-	return getTemplate(path)
+	b, err := t.FetchTemplate(path)
+	if err != nil {
+		return nil, err
+	}
+	r := bytes.NewReader(b)
+	return r, nil
 }
 
 func (t *TemplateHandler) FetchTemplate(filename string) ([]byte, error) {

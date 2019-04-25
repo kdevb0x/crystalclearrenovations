@@ -10,10 +10,14 @@ import (
 	"github.com/gorilla/mux"
 )
 
-const (
-	_ error = iota
-	ErrMalformedOrNilRequest
-)
+type ErrMalformedOrNilRequest struct {
+	s string
+}
+
+func (e *ErrMalformedOrNilRequest) Error() string {
+	e.s = string("error: malformed or nil http request")
+	return e.s
+}
 
 type SessionServer struct {
 	HostAddr   string
@@ -37,7 +41,7 @@ func NewSessionServer(hostAddr string) *SessionServer {
 
 func (s *SessionServer) HandleRequest(r *http.Request) error {
 	if r == nil {
-		return ErrMalformedOrNilRequest
+		return ErrMalformedOrNilRequest{}
 	}
 	return nil
 }
