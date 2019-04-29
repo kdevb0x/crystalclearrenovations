@@ -8,8 +8,12 @@ import (
 	"bytes"
 	"io"
 	"io/ioutil"
+	"net/http"
 	"path/filepath"
 )
+
+// path to render templates for server
+const renderPath = "./assets/static/"
 
 type TemplateLoader interface {
 	Abs(base, name string) string
@@ -25,7 +29,7 @@ func (t *TemplateHandler) Abs(base, name string) string {
 }
 
 func (t *TemplateHandler) Get(path string) (io.Reader, error) {
-	b, err := t.FetchTemplate(path)
+	b, err := t.FetchTemplateBytes(nil, path)
 	if err != nil {
 		return nil, err
 	}
@@ -33,11 +37,17 @@ func (t *TemplateHandler) Get(path string) (io.Reader, error) {
 	return r, nil
 }
 
-func (t *TemplateHandler) FetchTemplate(filename string) ([]byte, error) {
+// TODO: Figure out a better interplay between this and TemplateLoader interface.
+func (t *TemplateHandler) FetchTemplateBytes(loader TemplateLoader, filename string) ([]byte, error) {
 	f, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return nil, err
 	}
 	return f, nil
 
+}
+
+func homeHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/html")
+	// TODO: Finish this; Load and parse templates, and render to w.
 }

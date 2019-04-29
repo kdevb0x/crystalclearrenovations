@@ -4,6 +4,14 @@
 
 package main
 
-func main() {
+import (
+	"log"
+	"net/http"
+)
 
+var addr = ":8000"
+
+func main() {
+	s := NewSessionServer(addr, nil)
+	log.Fatal(http.ListenAndServe(addr, s))
 }
